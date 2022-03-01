@@ -25,5 +25,9 @@ func main() {
 	database.InitMigration(db)
 
 	routers.Init(app)
-	app.Listen(":" + os.Getenv("APP_PORT"))
+	err = app.Listen(":" + os.Getenv("APP_PORT"))
+	if err != nil {
+		panic(err)
+		return
+	}
 }

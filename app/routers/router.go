@@ -12,6 +12,6 @@ func Init(app *fiber.App) {
 		return c.SendString("/ path")
 	})
 
-	//palece new routers below
-	Book(app)
+	//Place new routers below
+	NectaScrapper(app)
 }

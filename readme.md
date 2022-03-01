@@ -1,6 +1,7 @@
 ## WEBSCRAPPER IN GO DEVELOPED BY OAU
 This  app is using Go version 1.17 because I think for now this is the most updated release. 
 
+project is based on boilerplate from here: `git@github.com:emixbal/fiber-gorm.git`
 ### Installation
  
 ```
