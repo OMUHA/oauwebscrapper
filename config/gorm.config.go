@@ -22,6 +22,7 @@ func InitDB() *gorm.DB {
 		}
 		return DB
 	}
+
 	fmt.Println("DB_DRIVER not supported")
 	return nil
 }

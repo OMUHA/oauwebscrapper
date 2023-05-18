@@ -3,6 +3,7 @@ module github.com/OMUHA/oauwebscrapper
 go 1.17
 
 require (
+	github.com/go-resty/resty/v2 v2.7.0
 	github.com/gofiber/fiber/v2 v2.18.0
 	github.com/golang-jwt/jwt/v4 v4.0.0
 	github.com/joho/godotenv v1.4.0
@@ -32,7 +33,7 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.29.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
-	golang.org/x/net v0.0.0-20210916014120-12bc252f5db8 // indirect
+	golang.org/x/net v0.0.0-20211029224645-99673261e6eb // indirect
 	golang.org/x/sys v0.0.0-20211102192858-4dd72447c267 // indirect
 	golang.org/x/text v0.3.6 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
