@@ -1,33 +1,22 @@
-# Building the binary of the App
-FROM golang:1.17.2-alpine AS build
+FROM golang:1.20.3-alpine AS base
 
-# `fiber-gorm` should be replaced with your project name
-WORKDIR /go/src/fiber-gorm
+FROM base as dev
 
-# Copy all the Code and stuff to compile everything
-COPY . .
-
-# Downloads all the dependencies in advance (could be left out, but it's more clear this way)
-RUN go mod download
-
-# Builds the application as a staticly linked one, to allow it to run on alpine
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o app -installsuffix cgo .
-
-
-# Moving the binary to the 'final Image' to make it smaller
-FROM alpine:latest
+RUN curl -sSfL https://raw.githubusercontent.com/cosmtrek/air/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
 
 WORKDIR /app
+CMD ["air"]
 
-# Create the `public` dir and copy all the assets into it
-RUN mkdir ./static
-COPY ./static ./static
+FROM base as built
 
-# `fiber-gorm` should be replaced here as well
-COPY --from=build /go/src/fiber-gorm/app .
-COPY --from=build /go/src/fiber-gorm/.env .
+WORKDIR /go/app/api
 
-# Exposes port 3000 because our program listens on that port
-EXPOSE 3000
+ENV CGO_ENABLED=0
 
-CMD ["./fiber-gorm"]
+RUN go get -d -v ./.. .
+RUN go build -o /tmp/webscrapper_server ./*.go
+
+FROM busybox
+
+COPY --from=built /tmp/webscrapper_server /usr/bin/webscrapper_server
+CMD ["webscrapper_server", "start"]
