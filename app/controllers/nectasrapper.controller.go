@@ -45,8 +45,7 @@ func NectaCseeScrapper(ctx *fiber.Ctx) error {
 		IdleConnTimeout:       90 * time.Second,
 		TLSHandshakeTimeout:   10 * time.Second,
 		ExpectContinueTimeout: 1 * time.Second,
-	},
-	)
+	}, )
 
 	c.OnRequest(func(r *colly.Request) {
 		fmt.Println("Visiting", r.URL)

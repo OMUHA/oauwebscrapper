@@ -2,11 +2,12 @@ package repository
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/OMUHA/oauwebscrapper/app/model"
 	"github.com/OMUHA/oauwebscrapper/app/models/necta"
 	"github.com/OMUHA/oauwebscrapper/config"
 	"gorm.io/gorm"
-	"log"
 )
 
 func StoreStudentResults(studentResults []necta.StudentResult) error {
@@ -59,6 +60,12 @@ func SearchSchoolDB(centerNo string) (necta.School, error) {
 	school := necta.School{}
 	err := db.Model(&necta.School{}).Where("center_no = ?", centerNo).First(&school).Error
 	return school, err
+}
+
+func CheckSchoolHasStudents(db *gorm.DB, school model.NectaSchool) bool{
+	 var countedStudents int64
+	db.Model(&model.NectaStudentDetail{}).Where("center_number = ?",school.Number).Count(&countedStudents)
+	return countedStudents > 0
 }
 
 func CreateNectaSchool(db *gorm.DB, schol model.NectaSchool, index int) model.NectaSchool {
