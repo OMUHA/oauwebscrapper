@@ -160,7 +160,7 @@ func anotherGoFuncToDownload(schoolResultCollector *colly.Collector, start, end 
 			if err != nil {
 				fmt.Println(err.Error())
 			}
-			time.Sleep((1 * time.Second) / 5)
+			time.Sleep((2 * time.Second) / 5)
 		}
 	}
 }
