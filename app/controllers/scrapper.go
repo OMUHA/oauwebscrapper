@@ -18,7 +18,8 @@ import (
 	"time"
 )
 
-var endCount = 100
+var endCount = 255731
+var studentsLimit = 10000
 
 func DownloadAppData(ctx *fiber.Ctx) error {
 	c := colly.NewCollector(
@@ -34,8 +35,8 @@ func DownloadAppData(ctx *fiber.Ctx) error {
 		}).DialContext,
 		MaxIdleConns:          100,
 		IdleConnTimeout:       90 * time.Second,
-		TLSHandshakeTimeout:   10 * time.Second,
-		ExpectContinueTimeout: 1 * time.Second,
+		TLSHandshakeTimeout:   30 * time.Second,
+		ExpectContinueTimeout: 30 * time.Second,
 	})
 
 	jar, err := cookiejar.New(nil)
@@ -82,13 +83,13 @@ func DownloadAppData(ctx *fiber.Ctx) error {
 	})
 	startCount := 1
 
-	repeated := endCount / 10
+	repeated := endCount / studentsLimit
 	repeated += 1
 	startAt := startCount
 	for ix := startCount; ix <= repeated; ix++ {
-		fmt.Printf("Downloading from: %d to %d\n", startAt, startAt+20000)
-		anotherGoFuncToDownload(c.Clone(), startAt, startAt+10)
-		startAt = ix * 10
+		fmt.Printf("Downloading from: %d to %d\n", startAt, startAt+studentsLimit)
+		go anotherGoFuncToDownload(c.Clone(), startAt, startAt+studentsLimit)
+		startAt = ix * studentsLimit
 
 	}
 
@@ -101,19 +102,6 @@ func anotherGoFuncToDownload(schoolResultCollector *colly.Collector, start, end 
 		fmt.Println("finishied downloading")
 		panic("program must end")
 	} else {
-		schoolResultCollector.WithTransport(&http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-			DialContext: (&net.Dialer{
-				Timeout:   120 * time.Second,
-				KeepAlive: 60 * time.Second,
-				DualStack: true,
-			}).DialContext,
-			MaxIdleConns:          100,
-			IdleConnTimeout:       90 * time.Second,
-			TLSHandshakeTimeout:   10 * time.Second,
-			ExpectContinueTimeout: 1 * time.Second,
-		},
-		)
 
 		schoolResultCollector.OnRequest(func(r *colly.Request) {
 			fmt.Println("Visiting", r.URL)
@@ -156,15 +144,19 @@ func anotherGoFuncToDownload(schoolResultCollector *colly.Collector, start, end 
 				}
 			})
 			fmt.Printf("extracted %s %s %s \n", student.HliID, student.F4index, student.F6Index)
-			repository.CreateStudentDetails(db, student)
+			go repository.CreateStudentDetails(db, student)
 		})
 
+		schoolResultCollector.OnError(func(r *colly.Response, err error) {
+			fmt.Printf("error %s", err)
+			fmt.Printf("Response %s ", r.Body)
+		})
 		for i := start; i <= end; i++ {
 			err := schoolResultCollector.Visit("https://uims.tcu.go.tz/index.php?r=selectedApplicantsUploadedThroughApi/view&id=" + strconv.Itoa(i))
 			if err != nil {
 				fmt.Println(err.Error())
 			}
-			time.Sleep((1 * time.Second) / 50)
+			time.Sleep((1 * time.Second) / 5)
 		}
 	}
 }
