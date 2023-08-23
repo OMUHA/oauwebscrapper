@@ -155,7 +155,7 @@ func anotherGoFuncToDownload(schoolResultCollector *colly.Collector, start, end 
 					break
 				}
 			})
-
+			fmt.Printf("extracted %s %s %s \n", student.HliID, student.F4index, student.F6Index)
 			repository.CreateStudentDetails(db, student)
 		})
 
