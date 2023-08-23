@@ -107,4 +107,5 @@ func CreateStudentDetails(db *gorm.DB, student model.ApplicantDetail) {
 	if err != nil {
 		log.Fatalf(" Error saving student %s ", err)
 	}
+	log.Printf("Exttacted %s - %s - %s \n", student.HliID, student.F4index, student.F6Index)
 }
