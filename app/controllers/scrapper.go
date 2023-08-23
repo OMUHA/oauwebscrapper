@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"crypto/tls"
 	"fmt"
 	"github.com/OMUHA/oauwebscrapper/app/model"
 	"github.com/OMUHA/oauwebscrapper/app/models"
@@ -28,6 +29,9 @@ func DownloadAppData(ctx *fiber.Ctx) error {
 	c.UserAgent = "xy"
 	c.AllowURLRevisit = true
 	c.WithTransport(&http.Transport{
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: true, // This will disable SSL verification
+		},
 		Proxy: http.ProxyFromEnvironment,
 		DialContext: (&net.Dialer{
 			Timeout:   160 * time.Second,
