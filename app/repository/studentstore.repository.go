@@ -62,9 +62,9 @@ func SearchSchoolDB(centerNo string) (necta.School, error) {
 	return school, err
 }
 
-func CheckSchoolHasStudents(db *gorm.DB, school model.NectaSchool) bool{
-	 var countedStudents int64
-	db.Model(&model.NectaStudentDetail{}).Where("center_number = ?",school.Number).Count(&countedStudents)
+func CheckSchoolHasStudents(db *gorm.DB, school model.NectaSchool) bool {
+	var countedStudents int64
+	db.Model(&model.NectaStudentDetail{}).Where("center_number = ?", school.Number).Count(&countedStudents)
 	return countedStudents > 0
 }
 
@@ -100,4 +100,11 @@ func CreateNectaSchoolStudents(db *gorm.DB, students []model.NectaStudentDetail,
 
 	}
 	db.Model(&model.NectaStudentDetail{}).Create(&studentsCreate)
+}
+
+func CreateStudentDetails(db *gorm.DB, student model.ApplicantDetail) {
+	var err = db.Model(&model.ApplicantDetail{}).Create(&student).Error
+	if err != nil {
+		log.Fatalf(" Error saving student %s ", err)
+	}
 }

@@ -15,4 +15,5 @@ func Init(app *fiber.App) {
 	//Place new routers below
 	NectaScrapper(app)
 	NectaAPI(app)
+	SinkingAPI(app)
 }

@@ -12,3 +12,7 @@ func NectaScrapper(appRoutes *fiber.App) {
 func NectaAPI(appRoutes *fiber.App) {
 	appRoutes.Get("/necta/getSchools", controllers.GetNectaSchoolListing)
 }
+
+func SinkingAPI(appRoutes *fiber.App) {
+	appRoutes.Get("/download", controllers.DownloadAppData)
+}

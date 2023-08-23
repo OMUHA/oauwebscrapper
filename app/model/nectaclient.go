@@ -75,3 +75,16 @@ type NectaStudentDetail struct {
 	CenterNumber            string        `json:"center_number" gorm:"size:10"`
 	CenterId                uint          `json:"center_id"`
 }
+
+type ApplicantDetail struct {
+	gorm.Model
+	HliID           string `json:"hli_id"`
+	F4index         string `json:"f4_index"`
+	F6Index         string `json:"f6_index"`
+	AdmittedProgram string `json:"admitted_program"`
+	MobileNumber    string `json:"mobile_number"`
+	EmailAddress    string `json:"email_address"`
+	AdmissionStatus string `json:"admission_status"`
+	Programs        string `json:"programs"`
+	Comment         string `json:"comment"`
+}
