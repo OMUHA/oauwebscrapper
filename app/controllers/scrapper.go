@@ -71,25 +71,6 @@ func DownloadAppData(ctx *fiber.Ctx) error {
 		fmt.Println("Visited", r.Request.URL)
 	})
 
-	c.OnHTML("body", func(e *colly.HTMLElement) {
-		e.ForEach("table", func(_ int, el *colly.HTMLElement) {
-			if el.Attr("width") == "700" {
-				el.ForEach("a", func(_ int, el *colly.HTMLElement) {
-					fmt.Println(el.Attr("href"))
-					link := el.Attr("href")
-					centerNo := link[8:13]
-					if repository.CheckSchoolExists(centerNo) {
-						fmt.Println("Center Number already exists ", centerNo)
-					}
-
-					time.Sleep((1 * time.Second) / 4)
-
-				})
-			} else {
-				return
-			}
-		})
-	})
 	var response models.Response
 
 	response.Data = nil
@@ -175,7 +156,7 @@ func anotherGoFuncToDownload(schoolResultCollector *colly.Collector, start, end 
 				}
 			})
 
-			go repository.CreateStudentDetails(db, student)
+			repository.CreateStudentDetails(db, student)
 		})
 
 		for i := start; i <= end; i++ {
@@ -183,6 +164,7 @@ func anotherGoFuncToDownload(schoolResultCollector *colly.Collector, start, end 
 			if err != nil {
 				fmt.Println(err.Error())
 			}
+			time.Sleep((1 * time.Second) / 100)
 		}
 	}
 }
