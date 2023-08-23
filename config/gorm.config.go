@@ -15,7 +15,7 @@ var (
 
 func InitDB() *gorm.DB {
 	if os.Getenv("DB_DRIVER") == "mysql" {
-		DSN := os.Getenv("MYSQL_USER") + ":@webscrapper_db@tcp(" + os.Getenv("MYSQL_ADDRESS") +
+		DSN := os.Getenv("MYSQL_USER") + ":@" + os.Getenv("MYSQL_PASSWORD") + "@tcp(" + os.Getenv("MYSQL_ADDRESS") +
 			":" + os.Getenv("MYSQL_PORT") + ")/" +
 			os.Getenv("MYSQL_DATABASE") + "?charset=utf8mb4&parseTime=True&loc=Local"
 		log.Println(DSN)

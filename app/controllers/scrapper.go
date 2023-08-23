@@ -18,7 +18,8 @@ import (
 	"time"
 )
 
-var endCount = 100 //255731
+var endCount = 255731
+
 func DownloadAppData(ctx *fiber.Ctx) error {
 	c := colly.NewCollector(
 		colly.AllowedDomains("uims.tcu.go.tz", "tcu.go.tz"),
