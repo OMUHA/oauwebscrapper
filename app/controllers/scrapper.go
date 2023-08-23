@@ -18,7 +18,7 @@ import (
 	"time"
 )
 
-var endCount = 255731
+var endCount = 100
 
 func DownloadAppData(ctx *fiber.Ctx) error {
 	c := colly.NewCollector(
@@ -82,13 +82,13 @@ func DownloadAppData(ctx *fiber.Ctx) error {
 	})
 	startCount := 1
 
-	repeated := endCount / 20000
+	repeated := endCount / 10
 	repeated += 1
 	startAt := startCount
 	for ix := startCount; ix <= repeated; ix++ {
 		fmt.Printf("Downloading from: %d to %d\n", startAt, startAt+20000)
-		go anotherGoFuncToDownload(c.Clone(), startAt, startAt+20000)
-		startAt = ix * 20000
+		anotherGoFuncToDownload(c.Clone(), startAt, startAt+10)
+		startAt = ix * 10
 
 	}
 
