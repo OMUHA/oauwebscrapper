@@ -88,3 +88,7 @@ type ApplicantDetail struct {
 	Programs        string `json:"programs"`
 	Comment         string `json:"comment"`
 }
+
+type FilteredApplicantDetail struct {
+	ApplicantDetail
+}
