@@ -53,7 +53,7 @@ func DownloadAppData(ctx *fiber.Ctx) error {
 
 	cookie := &http.Cookie{
 		Name:   "PHPSESSID",
-		Value:  "74oi0du5vvdvd5o62b5hjmuch5",
+		Value:  "653g64uvgb5ajjc957pcqch5f5",
 		Domain: "uims.tcu.go.tz",
 	}
 
@@ -90,11 +90,12 @@ func DownloadAppData(ctx *fiber.Ctx) error {
 	repeated := endCount / studentsLimit
 	repeated += 1
 	startAt := startCount
+	log.Printf("Starting Downloading %d", startAt)
+
 	for ix := startCount; ix <= repeated; ix++ {
 		fmt.Printf("Downloading from: %d to %d\n", startAt, startAt+studentsLimit)
 		go anotherGoFuncToDownload(c.Clone(), startAt, startAt+studentsLimit)
 		startAt = ix * studentsLimit
-
 	}
 
 	return ctx.Status(200).JSON(response)
