@@ -87,15 +87,15 @@ func DownloadAppData(ctx *fiber.Ctx) error {
 		fmt.Println("Finished", r.Request.URL)
 	})
 
-	repeated := endCount / studentsLimit
+	repeated := ((endCount - startCount) + 1) / studentsLimit
 	repeated += 1
 	startAt := startCount
 	log.Printf("Starting Downloading %d", startAt)
 
-	for ix := startCount; ix <= repeated; ix++ {
+	for ix := 1; ix <= repeated; ix++ {
 		fmt.Printf("Downloading from: %d to %d\n", startAt, startAt+studentsLimit)
 		go anotherGoFuncToDownload(c.Clone(), startAt, startAt+studentsLimit)
-		startAt = ix * studentsLimit
+		startAt = (ix * studentsLimit) + startCount
 	}
 
 	return ctx.Status(200).JSON(response)
