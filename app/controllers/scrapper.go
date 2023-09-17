@@ -27,7 +27,7 @@ func DownloadAppData(ctx *fiber.Ctx) error {
 	c := colly.NewCollector(
 		colly.AllowedDomains("uims.tcu.go.tz", "tcu.go.tz"),
 		colly.Async(true))
-	c.UserAgent = "xy"
+	c.UserAgent = "deio"
 	c.AllowURLRevisit = true
 	c.WithTransport(&http.Transport{
 		TLSClientConfig: &tls.Config{
