@@ -109,3 +109,9 @@ func CreateStudentDetails(db *gorm.DB, student model.ApplicantDetail) {
 	}
 	log.Printf("Exttacted %s - %s - %s \n", student.HliID, student.F4index, student.F6Index)
 }
+
+func GetApplicantData(db *gorm.DB) []model.ApplicantDetail {
+	var students []model.ApplicantDetail
+	db.Model(&model.ApplicantDetail{}).Find(&students)
+	return students
+}

@@ -82,6 +82,12 @@ type ApplicantDetail struct {
 	F4index         string `json:"f4_index"`
 	F6Index         string `json:"f6_index"`
 	AdmittedProgram string `json:"admitted_program"`
+	Fname           string `json:"fname"`
+	Mname           string `json:"mname"`
+	Lname           string `json:"lname"`
+	Gender          string `json:"gender"`
+	F4result        string `json:"f4result"`
+	F6Result        string `json:"F6Result"`
 	MobileNumber    string `json:"mobile_number"`
 	EmailAddress    string `json:"email_address"`
 	AdmissionStatus string `json:"admission_status"`

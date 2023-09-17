@@ -19,8 +19,9 @@ import (
 	"time"
 )
 
-var endCount = 255731
+var endCount = 364211
 var studentsLimit = 10000
+var startCount = 255731
 
 func DownloadAppData(ctx *fiber.Ctx) error {
 	c := colly.NewCollector(
@@ -85,7 +86,6 @@ func DownloadAppData(ctx *fiber.Ctx) error {
 	c.OnScraped(func(r *colly.Response) {
 		fmt.Println("Finished", r.Request.URL)
 	})
-	startCount := 1
 
 	repeated := endCount / studentsLimit
 	repeated += 1
@@ -163,4 +163,14 @@ func anotherGoFuncToDownload(schoolResultCollector *colly.Collector, start, end 
 			time.Sleep((2 * time.Second) / 5)
 		}
 	}
+}
+
+func filterStudentsf(ctx *fiber.Ctx) error {
+	var notselectedFiler []string
+
+	notselectedFiler = append(notselectedFiler, "provisionaladmission", "Admitted", "")
+
+	var response models.Response
+
+	return ctx.Status(200).JSON(response)
 }
