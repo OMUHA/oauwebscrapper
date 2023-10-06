@@ -19,9 +19,9 @@ import (
 	"time"
 )
 
-var endCount = 364211
+var endCount = 564211
 var studentsLimit = 10000
-var startCount = 255731
+var startCount = 364211
 
 func DownloadAppData(ctx *fiber.Ctx) error {
 	c := colly.NewCollector(
