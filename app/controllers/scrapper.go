@@ -53,7 +53,7 @@ func DownloadAppData(ctx *fiber.Ctx) error {
 
 	cookie := &http.Cookie{
 		Name:   "PHPSESSID",
-		Value:  "653g64uvgb5ajjc957pcqch5f5",
+		Value:  "ob20vfsdr7e90r2615a7ts08e0",
 		Domain: "uims.tcu.go.tz",
 	}
 
@@ -156,6 +156,7 @@ func anotherGoFuncToDownload(schoolResultCollector *colly.Collector, start, end 
 			fmt.Printf("error %s", err)
 			fmt.Printf("Response %s ", r.Body)
 		})
+
 		for i := start; i <= end; i++ {
 			err := schoolResultCollector.Visit("https://uims.tcu.go.tz/index.php?r=selectedApplicantsUploadedThroughApi/view&id=" + strconv.Itoa(i))
 			if err != nil {
