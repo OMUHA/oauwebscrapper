@@ -23,6 +23,39 @@ var endCount = 464211
 var studentsLimit = 10000
 var startCount = 264211
 
+func VerifyStudentList(ctx *fiber.Ctx) error {
+
+	db := config.GetDBInstance()
+	limitStudent := 10000
+	totalEntries := int(repository.GetTotalStuentDetaisl(db))
+	totalGroups := totalEntries / 10000
+
+	var startFilter = 0
+
+	for i := 0; i < totalGroups; i++ {
+		var students = repository.GetApplicantDataLimited(db, startFilter, limitStudent)
+
+		var studentVerified []model.TCUResponseParameters
+		for _, student := range students {
+			status, err := repository.VerifyStudentAccount(student.F4index)
+			log.Println(status.F4IndexNo + " " + strconv.Itoa(status.StatusCode) + " " + status.StatusDescription)
+			if err != nil {
+				studentVerified = append(studentVerified, status)
+
+			}
+
+			repository.UpdateStudentStatus(db, studentVerified)
+			log.Fatal(studentVerified)
+		}
+	}
+
+	var response models.Response
+	response.Data = nil
+	response.Message = "Success"
+	response.Status = 200
+	return ctx.Status(200).JSON(response)
+}
+
 func DownloadAppData(ctx *fiber.Ctx) error {
 	c := colly.NewCollector(
 		colly.AllowedDomains("uims.tcu.go.tz", "tcu.go.tz"),
@@ -154,7 +187,7 @@ func anotherGoFuncToDownload(schoolResultCollector *colly.Collector, start, end 
 
 		schoolResultCollector.OnError(func(r *colly.Response, err error) {
 			fmt.Printf("error %s", err)
-			fmt.Printf("Response %s ", r.Body)
+			fmt.Printf("TCUResponse %s ", r.Body)
 		})
 
 		for i := start; i <= end; i++ {
