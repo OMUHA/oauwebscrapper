@@ -30,7 +30,7 @@ func VerifyStudentList(ctx *fiber.Ctx) error {
 	totalEntries := int(repository.GetTotalStuentDetaisl(db))
 	totalGroups := (totalEntries / 10000) + 1
 
-	var startFilter = 0
+	var startFilter = 10000
 
 	log.Printf("Verifying %d", totalEntries)
 	for i := 0; i < totalGroups; i++ {
