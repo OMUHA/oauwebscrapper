@@ -37,20 +37,16 @@ func VerifyStudentList(ctx *fiber.Ctx) error {
 		var students = repository.GetApplicantDataLimited(db, startFilter, limitStudent)
 		log.Printf("Student %d ", len(students))
 
-		var studentVerified []model.TCUResponseParameters
-		for _, student := range students {
-			status, err := repository.VerifyStudentAccount(student.F4index)
-			log.Println("checking students " + status.F4IndexNo + " " + strconv.Itoa(status.StatusCode) + " " + status.StatusDescription)
-			if err == nil {
-				studentVerified = append(studentVerified, status)
-			} else {
-				log.Println("Error verifying student " + student.F4index + " -  " + err.Error())
+		if len(students) > 0 {
+			status, err := repository.VerifyStudentAccount(students)
+
+			if err != nil {
+				log.Printf("student  error %s", err.Error())
 			}
 
-			repository.UpdateStudentStatus(db, studentVerified)
-
+			repository.UpdateStudentStatus(db, status)
+			startFilter = startFilter + limitStudent
 		}
-		startFilter = startFilter + limitStudent
 	}
 
 	var response models.Response

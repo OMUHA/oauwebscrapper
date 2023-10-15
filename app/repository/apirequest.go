@@ -56,6 +56,31 @@ func parseXML(xmlData string) (model.TCUResponseParameters, error) {
 	return response, nil
 }
 
+func parseXMLMulti(xmlData string) ([]model.TCUResponseParameters, error) {
+	var response model.TCUResponse
+
+	decoder := xml.NewDecoder(strings.NewReader(xmlData))
+	for {
+		t, err := decoder.Token()
+		if err != nil {
+			break
+		}
+		switch se := t.(type) {
+		case xml.StartElement:
+			if se.Name.Local == "ResponseParameters" {
+				var rp model.TCUResponseParameters
+				err := decoder.DecodeElement(&rp, &se)
+				if err != nil {
+					return nil, err
+				}
+				response.ResponseParameters = append(response.ResponseParameters, rp)
+			}
+		}
+	}
+
+	return response.ResponseParameters, nil
+}
+
 func GetCentersListing() ([]model.NectaSchool, error) {
 
 	client := resty.New()
@@ -81,12 +106,19 @@ func GetCentersListing() ([]model.NectaSchool, error) {
 	return responResult.Response, nil
 }
 
-func VerifyStudentAccount(indexNumber string) (model.TCUResponseParameters, error) {
+func VerifyStudentAccount(apps []model.ApplicantDetail) ([]model.TCUResponseParameters, error) {
+
+	var indexListing = ""
+
+	for _, app := range apps {
+		indexListing = indexListing + "<f4indexno>" + app.F4index + "</f4indexno>"
+	}
+
 	var request = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
 		"<Request>" +
 		"<UsernameToken><Username>MNZ</Username>" +
 		"<SessionToken>1Hpn63x87qGSRTjr4OfE</SessionToken>" +
-		"</UsernameToken><RequestParameters><f4indexno>" + indexNumber + "</f4indexno></RequestParameters></Request>"
+		"</UsernameToken><RequestParameters>" + indexListing + "</RequestParameters></Request>"
 	client := resty.New()
 	var responResult string
 
@@ -95,6 +127,7 @@ func VerifyStudentAccount(indexNumber string) (model.TCUResponseParameters, erro
 		SetBody(request).
 		SetResult(&responResult).
 		Post("http://api.tcu.go.tz/applicants/checkStatus")
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -105,7 +138,7 @@ func VerifyStudentAccount(indexNumber string) (model.TCUResponseParameters, erro
 		log.Fatal(resp.RawResponse)
 	}
 
-	response, err := parseXML(string(resp.Body()))
+	response, err := parseXMLMulti(string(resp.Body()))
 
 	log.Println(string(resp.Body()))
 	log.Printf("response %v", response)

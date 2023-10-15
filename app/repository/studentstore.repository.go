@@ -118,13 +118,13 @@ func GetApplicantData(db *gorm.DB) []model.ApplicantDetail {
 
 func GetTotalStuentDetaisl(db *gorm.DB) int64 {
 	var total int64
-	db.Model(&model.ApplicantDetail{}).Count(&total)
+	db.Model(&model.ApplicantDetail{}).Where("verification_status is ?", nil).Count(&total)
 	return total
 }
 
 func GetApplicantDataLimited(db *gorm.DB, start, limit int) []model.ApplicantDetail {
 	var students []model.ApplicantDetail
-	err := db.Model(&model.ApplicantDetail{}).Offset(start).Limit(limit).Find(&students).Error
+	err := db.Model(&model.ApplicantDetail{}).Where("verification_status is ?", nil).Offset(start).Limit(limit).Find(&students).Error
 
 	if err != nil {
 		log.Printf(" errors %s", err.Error())
