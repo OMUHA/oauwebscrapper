@@ -124,7 +124,7 @@ func GetTotalStuentDetaisl(db *gorm.DB) int64 {
 
 func GetApplicantDataLimited(db *gorm.DB, start, limit int) []model.ApplicantDetail {
 	var students []model.ApplicantDetail
-	err := db.Model(&model.ApplicantDetail{}).Where("verification_status is ?", nil).Offset(start).Limit(limit).Find(&students).Error
+	err := db.Model(&model.ApplicantDetail{}).Offset(start).Limit(limit).Find(&students).Error
 
 	if err != nil {
 		log.Printf(" errors %s", err.Error())
