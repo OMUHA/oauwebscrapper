@@ -28,10 +28,11 @@ func VerifyStudentList(ctx *fiber.Ctx) error {
 	db := config.GetDBInstance()
 	limitStudent := 10000
 	totalEntries := int(repository.GetTotalStuentDetaisl(db))
-	totalGroups := totalEntries / 10000
+	totalGroups := (totalEntries / 10000) + 1
 
 	var startFilter = 0
 
+	log.Printf("Verifying %d", totalEntries)
 	for i := 0; i < totalGroups; i++ {
 		var students = repository.GetApplicantDataLimited(db, startFilter, limitStudent)
 		log.Printf("Student %d ", len(students))
@@ -39,15 +40,17 @@ func VerifyStudentList(ctx *fiber.Ctx) error {
 		var studentVerified []model.TCUResponseParameters
 		for _, student := range students {
 			status, err := repository.VerifyStudentAccount(student.F4index)
-			log.Println(status.F4IndexNo + " " + strconv.Itoa(status.StatusCode) + " " + status.StatusDescription)
-			if err != nil {
+			log.Println("checking students " + status.F4IndexNo + " " + strconv.Itoa(status.StatusCode) + " " + status.StatusDescription)
+			if err == nil {
 				studentVerified = append(studentVerified, status)
-
+			} else {
+				log.Println("Error verifying student " + student.F4index + " -  " + err.Error())
 			}
 
 			repository.UpdateStudentStatus(db, studentVerified)
-			log.Fatal(studentVerified)
+
 		}
+		startFilter = startFilter + limitStudent
 	}
 
 	var response models.Response

@@ -126,7 +126,9 @@ func GetApplicantDataLimited(db *gorm.DB, start, limit int) []model.ApplicantDet
 	var students []model.ApplicantDetail
 	err := db.Model(&model.ApplicantDetail{}).Offset(start).Limit(limit).Find(&students).Error
 
-	log.Printf(" errors %s", err.Error())
-
+	if err != nil {
+		log.Printf(" errors %s", err.Error())
+	}
+	log.Printf(" total STudents %d", len(students))
 	return students
 }

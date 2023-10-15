@@ -108,5 +108,5 @@ type TCUResponseParameters struct {
 }
 
 type TCUResponse struct {
-	ResponseParameters TCUResponseParameters `xml:"TCUResponseParameters"`
+	ResponseParameters TCUResponseParameters `xml:"ResponseParameters"`
 }

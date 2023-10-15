@@ -8,17 +8,52 @@ import (
 	"gorm.io/gorm"
 	"log"
 	"strconv"
+	"strings"
 )
 
-func parseXML(xmlData string) (model.TCUResponseParameters, error) {
+/*func parseXML(xmlData []byte) (model.TCUResponseParameters, error) {
 	var response model.TCUResponse
 
-	err := xml.Unmarshal([]byte(xmlData), &response)
+	err := xml.Unmarshal(xmlData, &response)
 	if err != nil {
+		log.Fatal(err.Error())
 		return model.TCUResponseParameters{}, err
 	}
 
 	return response.ResponseParameters, nil
+}*/
+
+func parseXML(xmlData string) (model.TCUResponseParameters, error) {
+	var response model.TCUResponseParameters
+
+	decoder := xml.NewDecoder(strings.NewReader(xmlData))
+	for {
+		t, err := decoder.Token()
+		if err != nil {
+			break
+		}
+		switch se := t.(type) {
+		case xml.StartElement:
+			if se.Name.Local == "f4indexno" {
+				err := decoder.DecodeElement(&response.F4IndexNo, &se)
+				if err != nil {
+					return model.TCUResponseParameters{}, err
+				}
+			} else if se.Name.Local == "StatusCode" {
+				err := decoder.DecodeElement(&response.StatusCode, &se)
+				if err != nil {
+					return model.TCUResponseParameters{}, err
+				}
+			} else if se.Name.Local == "StatusDescription" {
+				err := decoder.DecodeElement(&response.StatusDescription, &se)
+				if err != nil {
+					return model.TCUResponseParameters{}, err
+				}
+			}
+		}
+	}
+
+	return response, nil
 }
 
 func GetCentersListing() ([]model.NectaSchool, error) {
@@ -72,6 +107,8 @@ func VerifyStudentAccount(indexNumber string) (model.TCUResponseParameters, erro
 
 	response, err := parseXML(string(resp.Body()))
 
+	log.Println(string(resp.Body()))
+	log.Printf("response %v", response)
 	return response, err
 
 }
