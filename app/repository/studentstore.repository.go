@@ -118,7 +118,7 @@ func GetApplicantData(db *gorm.DB) []model.ApplicantDetail {
 
 func GetTotalStuentDetaisl(db *gorm.DB) int64 {
 	var total int64
-	db.Model(&model.ApplicantDetail{}).Where("verification_status is ?", nil).Count(&total)
+	db.Model(&model.ApplicantDetail{}).Count(&total)
 	return total
 }
 
