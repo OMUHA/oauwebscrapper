@@ -124,6 +124,9 @@ func GetTotalStuentDetaisl(db *gorm.DB) int64 {
 
 func GetApplicantDataLimited(db *gorm.DB, start, limit int) []model.ApplicantDetail {
 	var students []model.ApplicantDetail
-	db.Model(&model.ApplicantDetail{}).Offset(start).Limit(limit).Find(&students)
+	err := db.Model(&model.ApplicantDetail{}).Offset(start).Limit(limit).Find(&students).Error
+
+	log.Printf(" errors %s", err.Error())
+
 	return students
 }

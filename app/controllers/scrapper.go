@@ -34,6 +34,7 @@ func VerifyStudentList(ctx *fiber.Ctx) error {
 
 	for i := 0; i < totalGroups; i++ {
 		var students = repository.GetApplicantDataLimited(db, startFilter, limitStudent)
+		log.Printf("Student %d ", len(students))
 
 		var studentVerified []model.TCUResponseParameters
 		for _, student := range students {
