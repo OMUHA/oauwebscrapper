@@ -9,7 +9,7 @@ import (
 )
 
 func InitMigration(db *gorm.DB) {
-	err := db.AutoMigrate(&model.ApplicantDetail{}, &model.FilteredApplicantDetail{}, &model.NectaSchool{}, &model.NectaStudentDetail{}, &models.User{}, &necta.StudentResult{}, &necta.School{})
+	err := db.AutoMigrate(&model.ApplicantDetail{}, &model.FilteredApplicantDetail{}, &model.NectaSchool{}, &necta.SchoolStatistic{}, &model.NectaStudentDetail{}, &models.User{}, &necta.StudentResult{}, &necta.School{})
 	if err != nil {
 		//panic(err)
 	}

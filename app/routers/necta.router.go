@@ -7,6 +7,8 @@ import (
 
 func NectaScrapper(appRoutes *fiber.App) {
 	appRoutes.Get("/necta/scrapper/:yearID", controllers.NectaCseeScrapper)
+	appRoutes.Get("/update_students", controllers.NectaUpdateStudent)
+	appRoutes.Get("/necta/acsee/:yearID", controllers.NectaACseeScrapper)
 }
 
 func NectaAPI(appRoutes *fiber.App) {
