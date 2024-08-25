@@ -1,4 +1,3 @@
-version: '3'
 services:
 #Database SErvice
 #    webscrapper_db:
@@ -41,23 +40,23 @@ services:
             - "5439:5432"
         networks:
             - webscrapper
-# WEb application api service
- #   webscrapper:
- #       build:
- #           context: .
- #           dockerfile: ./Dockerfile
- #           target: dev
- #       working_dir: /opt/app/api
- #       container_name: webscrapper
- #       restart: always
- #       ports:
- #           - ${SERVER_LISTEN_PORT}:${APP_PORT}
- #       depends_on: 
- #           - webscrapper_db
- #       networks:
- #           - webscrapper
- #      volumes:
- #           - ./:/app
+ # WEb application api service
+    webscrapper:
+        build:
+            context: .
+            dockerfile: ./Dockerfile
+            target: dev
+        working_dir: /opt/app/api
+        container_name: webscrapper
+        restart: always
+        ports:
+            - ${SERVER_LISTEN_PORT}:${APP_PORT}
+        depends_on:
+            - webscrapper_db2
+        networks:
+            - webscrapper
+        volumes:
+            - ./:/app
 #Docker Networks
 networks:
   webscrapper:
