@@ -30,18 +30,9 @@ RUN go mod download
 
 COPY . .
 
-CMD ["air"]
+# Build the Go project
+RUN go build -o /usr/bin/webscrapper_server
 
-FROM base as built
-
-WORKDIR /go/app/api
-
-ENV CGO_ENABLED=0
-
-RUN go get -d -v ./.. .
-RUN go build -o /tmp/webscrapper_server ./*.go
-
-FROM busybox
-
-COPY --from=built /tmp/webscrapper_server /usr/bin/webscrapper_server
+# Expose the port the service listens on
+EXPOSE 8282
 CMD ["webscrapper_server", "start"]
