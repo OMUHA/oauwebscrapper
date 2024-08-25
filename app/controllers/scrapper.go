@@ -8,6 +8,7 @@ import (
 	"github.com/OMUHA/oauwebscrapper/app/repository"
 	"github.com/OMUHA/oauwebscrapper/config"
 	"github.com/gocolly/colly"
+	"github.com/gofiber/fiber/v2"
 	"log"
 	"net"
 	"net/http"
