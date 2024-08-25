@@ -8,7 +8,6 @@ import (
 	"github.com/OMUHA/oauwebscrapper/app/repository"
 	"github.com/OMUHA/oauwebscrapper/config"
 	"github.com/gocolly/colly"
-	"github.com/gofiber/fiber/v2"
 	"log"
 	"net"
 	"net/http"
@@ -19,9 +18,9 @@ import (
 	"time"
 )
 
-var endCount = 464211
+var endCount = 200000
 var studentsLimit = 10000
-var startCount = 264211
+var startCount = 0
 
 func VerifyStudentList(ctx *fiber.Ctx) error {
 
@@ -60,7 +59,7 @@ func DownloadAppData(ctx *fiber.Ctx) error {
 	c := colly.NewCollector(
 		colly.AllowedDomains("uims.tcu.go.tz", "tcu.go.tz"),
 		colly.Async(true))
-	c.UserAgent = "deio"
+	c.UserAgent = "smuckle-v1"
 	c.AllowURLRevisit = true
 	c.WithTransport(&http.Transport{
 		TLSClientConfig: &tls.Config{
@@ -86,7 +85,7 @@ func DownloadAppData(ctx *fiber.Ctx) error {
 
 	cookie := &http.Cookie{
 		Name:   "PHPSESSID",
-		Value:  "ob20vfsdr7e90r2615a7ts08e0",
+		Value:  "hov82i842cim7opr6e4lagpka0",
 		Domain: "uims.tcu.go.tz",
 	}
 

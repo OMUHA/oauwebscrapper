@@ -13,6 +13,7 @@ func NectaScrapper(appRoutes *fiber.App) {
 
 func NectaAPI(appRoutes *fiber.App) {
 	appRoutes.Get("/necta/getSchools", controllers.GetNectaSchoolListing)
+	appRoutes.Get("/necta/getStudents/:yearID", controllers.GetNectaStudentListing)
 }
 
 func SinkingAPI(appRoutes *fiber.App) {

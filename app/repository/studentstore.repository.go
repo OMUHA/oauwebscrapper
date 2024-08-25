@@ -210,7 +210,7 @@ func CreateNectaSchool(db *gorm.DB, schol model.NectaSchool, index int) model.Ne
 	return schol
 }
 
-func CreateNectaSchoolStudents(db *gorm.DB, students []model.NectaStudentDetail, centerNo string, centerID uint) {
+func CreateNectaSchoolStudents(db *gorm.DB, students []model.NectaStudentDetail, centerNo string, centerID uint, regYear string) {
 
 	var studentsCreate []model.NectaStudentDetail
 	for _, student := range students {
@@ -221,11 +221,11 @@ func CreateNectaSchoolStudents(db *gorm.DB, students []model.NectaStudentDetail,
 		} else {
 			student.CenterNumber = centerNo
 			student.CenterId = centerID
+			student.RegYear = regYear
 			student.Disabilities = nil
 			student.Difficulties = nil
 			studentsCreate = append(studentsCreate, student)
 		}
-
 	}
 	db.Model(&model.NectaStudentDetail{}).Create(&studentsCreate)
 }

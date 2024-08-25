@@ -74,6 +74,7 @@ type NectaStudentDetail struct {
 	Disabilities            []interface{} `json:"disabilities"  gorm:"-" `
 	CenterNumber            string        `json:"center_number" gorm:"size:10"`
 	CenterId                uint          `json:"center_id"`
+	RegYear                 string        `json:"reg_year" gorm:"size:10"`
 }
 
 type ApplicantDetail struct {

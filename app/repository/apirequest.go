@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"encoding/xml"
 	"github.com/OMUHA/oauwebscrapper/app/model"
+	"github.com/OMUHA/oauwebscrapper/config"
 	"github.com/go-resty/resty/v2"
 	"gorm.io/gorm"
 	"log"
@@ -79,6 +80,14 @@ func parseXMLMulti(xmlData string) ([]model.TCUResponseParameters, error) {
 	}
 
 	return response.ResponseParameters, nil
+}
+
+func FindAllNectaSchools() ([]model.NectaSchool, error) {
+	db := config.GetDBInstance()
+	var schools []model.NectaSchool
+	err := db.Model(&model.NectaSchool{}).Find(&schools).Error
+
+	return schools, err
 }
 
 func GetCentersListing() ([]model.NectaSchool, error) {
