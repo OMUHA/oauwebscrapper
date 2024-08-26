@@ -81,8 +81,7 @@ func DownloadACSEECSEEResults(ctx *fiber.Ctx) error {
 			startFilter = startFilter + limitStudent
 		}
 
-		saveToDatabase(indexNumberList,1)
-		panic(indexNumberList)
+		go saveToDatabase(indexNumberList,1)
 		go saveToDatabase(indexNumberListAcsee,2)
 	}
 	
