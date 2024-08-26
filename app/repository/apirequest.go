@@ -259,6 +259,14 @@ func mapIndexFromList(index string, indexList []string) string {
 	return index
 }
 
+func mergeSubjectsToString(subjects []model.Subject) string {
+	var mappedString = ""
+	for _, subject := range subjects {
+		mappedString = mappedString + subject.SubjectName + " - " + subject.Grade + ","
+	}
+	return mappedString
+}
+
 func CreateStudentNectaResults(db *gorm.DB, students []model.NectaStudentResult, indexNoList []string, examId int) error {
 	// search student results for each index number
 	log.Printf("Total students %d \n", len(students))
@@ -266,15 +274,16 @@ func CreateStudentNectaResults(db *gorm.DB, students []model.NectaStudentResult,
 		// update student results
 		if student.Status.Code == 1 {
 			indexNo := mapIndexFromList(student.Particulars.IndexNumber,indexNoList)
-			log.Printf("updating student %s \n", indexNo)
 			if (examId == 1){
-				cseeResultJson, _ := json.Marshal(student)
+				cseeResultJson, _ := json.Marshal(student.Subjects)
+				mappedString := mergeSubjectsToString(student.Subjects)
 				err := db.Model(&model.ApplicantDetail{}).
 				Where("f4index = ?", indexNo).
 				Updates(&model.ApplicantDetail{Fname:student.Particulars.FirstName,
 					Mname:student.Particulars.MiddleName,
 					Lname:student.Particulars.LastName,
 					Gender: student.Particulars.Sex,
+					F4result: mappedString,
 					CseeCenterName: student.Particulars.CenterName,
 					CseeDivision: student.Results.Division,
 					CseePoints: student.Results.Points,
@@ -283,13 +292,15 @@ func CreateStudentNectaResults(db *gorm.DB, students []model.NectaStudentResult,
 					log.Printf("Error updating csee student %s:   %s\n", indexNo,err.Error())
 				}
 			}else{
-				acseeResultJson, _ := json.Marshal(student.Results)
+				acseeResultJson, _ := json.Marshal(student.Subjects)
+				mappedString := mergeSubjectsToString(student.Subjects)
 				err := db.Model(&model.ApplicantDetail{}).
 				Where("f6index = ?", indexNo).
 				Updates(&model.ApplicantDetail{Fname:student.Particulars.FirstName,
 					Mname:student.Particulars.MiddleName,
 					Lname:student.Particulars.LastName,
 					Gender:student.Particulars.Sex,
+					F6Result: mappedString,
 					AcseeCenterName:student.Particulars.CenterName,
 					AcseeDivision:student.Results.Division,
 					AcseePoints:student.Results.Points,
