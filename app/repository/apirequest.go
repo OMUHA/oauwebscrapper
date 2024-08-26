@@ -295,7 +295,7 @@ func CreateStudentNectaResults(db *gorm.DB, students []model.NectaStudentResult,
 				acseeResultJson, _ := json.Marshal(student.Subjects)
 				mappedString := mergeSubjectsToString(student.Subjects)
 				err := db.Model(&model.ApplicantDetail{}).
-				Where("f6index = ?", indexNo).
+				Where("f6_index = ?", indexNo).
 				Updates(&model.ApplicantDetail{Fname:student.Particulars.FirstName,
 					Mname:student.Particulars.MiddleName,
 					Lname:student.Particulars.LastName,
