@@ -44,7 +44,7 @@ type NectaStudentResult struct {
 	} `json:"particulars"`
 	Results struct {
 		Division string `json:"division"`
-		Points string `json:"points"`
+		Points float64 `json:"points"`
 		Subjects []struct {
 			SubjectName string `json:"subject_name"`
 			SubjectCode string `json:"subject_code"`
@@ -120,11 +120,11 @@ type ApplicantDetail struct {
 	CseeResult string `json:"csee_result"`
 	CseeCenterName string `json:"csee_center_name"`
 	CseeDivision string `json:"csee_division"`
-	CseePoints string `json:"csee_points"`
+	CseePoints float64 `json:"csee_points"`
 	AcseeResult string `json:"acsee_result"`
 	AcseeCenterName string `json:"acsee_center_name"`
 	AcseeDivision string `json:"acsee_division"`
-	AcseePoints string `json:"acsee_points"`
+	AcseePoints float64 `json:"acsee_points"`
 	MobileNumber       string `json:"mobile_number"`
 	EmailAddress       string `json:"email_address"`
 	AdmissionStatus    string `json:"admission_status"`
