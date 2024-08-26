@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"log"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -186,12 +187,16 @@ func GetStudentResultsBulky(indexNoList []string,examId int)([]model.NectaStuden
 	request.ApiKey = "$2y$10$7BFbtDEWB2uac61b96WhlO7tAJp0p4bHbVYxhZgCe.D.WOGgHrG/2"
 	
 	for _, v := range(indexNoList) {
+		if matchIndex(v) {
 		indexNo, examYear := splitIndexToParts(v)
 		request.Particulars = append(request.Particulars, struct {
 			IndexNumber string `json:"index_number"`
 			ExamYear string `json:"exam_year"`
 			ExamId int `json:"exam_id"`
 		}{IndexNumber: indexNo, ExamYear: examYear, ExamId:  examId})
+		}else{
+			log.Printf("unmatched index number %s",v)
+		}
 	}
 
 	requestJson, _ := json.Marshal(request)
@@ -212,6 +217,17 @@ func GetStudentResultsBulky(indexNoList []string,examId int)([]model.NectaStuden
 
 	return responResult.Response, nil
 
+}
+
+func matchIndex(index string) bool {
+    // Define the regular expression pattern
+    pattern := `^[SP]\d{4}/\d{4}/\d{4}$`
+    
+    // Compile the regular expression
+    re := regexp.MustCompile(pattern)
+    
+    // Check if the index matches the pattern
+    return re.MatchString(index)
 }
 
 func CreateStudentNectaResults(db *gorm.DB, students []model.NectaStudentResult, indexNoList []string, examId int) error {

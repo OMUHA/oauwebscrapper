@@ -143,7 +143,7 @@ func UpdateStudentResults(db *gorm.DB, year int) {
 
 			var err3 = db.Model(&necta.StudentResult{}).Where("id = ?", student.ID).Updates(&student).Error
 			if err3 != nil {
-				log.Printf("Error updating student %s: %v \n", student.ID, student)
+				log.Printf("Error updating student %d: %v \n", student.ID, student)
 			} else {
 				log.Printf("Student updated successfully %s \n", student.IndexNo)
 			}
@@ -253,7 +253,7 @@ func GetTotalStuentDetaisl(db *gorm.DB) int64 {
 
 func GetTotalStudentsCurrent(db *gorm.DB) int64 {
 	var total int64
-	db.Model(&model.ApplicantDetail{}).Where("created_at >=", "2024-08-10").Count(&total)
+	db.Model(&model.ApplicantDetail{}).Where("created_at >= ?", "2024-08-10").Count(&total)
 	return total
 }
 
