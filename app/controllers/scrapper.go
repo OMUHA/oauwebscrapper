@@ -60,10 +60,10 @@ func VerifyStudentList(ctx *fiber.Ctx) error {
 func DownloadACSEECSEEResults(ctx *fiber.Ctx) error {
 
 	db := config.GetDBInstance()
-	limitStudent := 1000
+	limitStudent := 100
 	totalEntries := int(repository.GetTotalStudentsCurrent(db))
 
-	totalGroups := (totalEntries / 1000) + 1
+	totalGroups := (totalEntries / 100) + 1
 	
 	var startFilter = 0
 	var indexNumberList []string
