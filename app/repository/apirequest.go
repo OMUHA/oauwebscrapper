@@ -202,7 +202,6 @@ func GetStudentResultsBulky(indexNoList []string,examId int)([]model.NectaStuden
 
 	requestJson, _ := json.Marshal(request)
 
-	log.Printf("request json: %s", requestJson)
 	resp , err := client.R().
 		SetHeader("Content-Type","application/json").
 		SetBody(string(requestJson)).
@@ -217,7 +216,6 @@ func GetStudentResultsBulky(indexNoList []string,examId int)([]model.NectaStuden
 		log.Fatal(resp.RawResponse)
 	}
 
-	panic(responResult.Response)
 	return responResult.Response, nil
 
 }
