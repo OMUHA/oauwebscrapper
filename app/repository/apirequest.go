@@ -187,6 +187,7 @@ func GetStudentResultsBulky(indexNoList []string,examId int)([]model.NectaStuden
 	request.ApiKey = "$2y$10$7BFbtDEWB2uac61b96WhlO7tAJp0p4bHbVYxhZgCe.D.WOGgHrG/2"
 	
 	for _, v := range(indexNoList) {
+		v = strings.ToUpper(v)
 		if matchIndex(v) {
 		indexNo, examYear := splitIndexToParts(v)
 		request.Particulars = append(request.Particulars, struct {
