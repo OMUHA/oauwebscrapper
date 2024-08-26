@@ -85,6 +85,7 @@ func DownloadACSEECSEEResults(ctx *fiber.Ctx) error {
 		go saveToDatabase(indexNumberListAcsee,2)
 	}
 	
+	return ctx.Status(200).JSON("{message: 'success'}")
 }
 
 func saveToDatabase(indexNumberList []string, examType int) {
@@ -93,7 +94,7 @@ func saveToDatabase(indexNumberList []string, examType int) {
 		log.Printf("student  error %s", err.Error())
 	}
     db := config.GetDBInstance()
-	err := repository.CreateStudentNectaResults(db, results, indexNumberList, examType)
+	err  = repository.CreateStudentNectaResults(db, results, indexNumberList, examType)
 	if err != nil {
 		log.Printf("student  error %s", err.Error())
 	}

@@ -19,4 +19,5 @@ func NectaAPI(appRoutes *fiber.App) {
 func SinkingAPI(appRoutes *fiber.App) {
 	appRoutes.Get("/download", controllers.DownloadAppData)
 	appRoutes.Get("/verify_list", controllers.VerifyStudentList)
+	appRoutes.Get("/sink_data",controllers.DownloadACSEECSEEResults)
 }
