@@ -202,9 +202,10 @@ func GetStudentResultsBulky(indexNoList []string,examId int)([]model.NectaStuden
 
 	requestJson, _ := json.Marshal(request)
 
+	log.Printf("request json: %s", requestJson)
 	resp , err := client.R().
 		SetHeader("Content-Type","application/json").
-		SetBody(&requestJson).
+		SetBody(string(requestJson)).
 		SetResult(&responResult).
 		Post("https://api.necta.go.tz/api/results/bulk-general")
 
