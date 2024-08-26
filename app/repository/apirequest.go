@@ -249,14 +249,23 @@ func matchIndex(index string) bool {
     return re.MatchString(index)
 }
 
+func mapIndexFromList(index string, indexList []string) string {
+	index = strings.ReplaceAll(index, "-", "/")
+	for _, v := range indexList {
+		if strings.Contains(index, v) {
+			return v
+		}
+	}
+	return index
+}
+
 func CreateStudentNectaResults(db *gorm.DB, students []model.NectaStudentResult, indexNoList []string, examId int) error {
 	// search student results for each index number
 	log.Printf("Total students %d \n", len(students))
 	for _, student := range students {
 		// update student results
 		if student.Status.Code == 1 {
-			indexNo := student.Particulars.IndexNumber + "/" + student.Particulars.ExamYear
-			indexNo = strings.ReplaceAll(indexNo, "-", "/")
+			indexNo := mapIndexFromList(student.Particulars.IndexNumber,indexNoList)
 			log.Printf("updating student %s \n", indexNo)
 			if (examId == 1){
 				cseeResultJson, _ := json.Marshal(student)
