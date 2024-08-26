@@ -208,8 +208,7 @@ func GetStudentResultsBulky(indexNoList []string,examId int)([]model.NectaStuden
 		SetBody(request).
 		SetResult(responResult).
 		Post("https://api.necta.go.tz/api/results/bulk-general")
-	log.Fatalf("Request %s obb %+v",request)
-	panic(err)
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -218,7 +217,7 @@ func GetStudentResultsBulky(indexNoList []string,examId int)([]model.NectaStuden
 		log.Fatal(resp.RawResponse)
 	}
 
-	log.Printf("Response %v", responResult.Response)
+	log.Printf("Response %+v", responResult.Response)
 	return responResult.Response, nil
 
 }
