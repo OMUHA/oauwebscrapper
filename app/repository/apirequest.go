@@ -216,6 +216,7 @@ func GetStudentResultsBulky(indexNoList []string,examId int)([]model.NectaStuden
 		log.Fatal(resp.RawResponse)
 	}
 
+	panic(responResult.Response)
 	return responResult.Response, nil
 
 }
