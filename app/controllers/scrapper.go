@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/OMUHA/oauwebscrapper/app/model"
@@ -56,37 +57,63 @@ func VerifyStudentList(ctx *fiber.Ctx) error {
 	response.Status = 200
 	return ctx.Status(200).JSON(response)
 }
-
 func DownloadACSEECSEEResults(ctx *fiber.Ctx) error {
+    db := config.GetDBInstance()
+    limitStudent := 100
+    totalEntries := int(repository.GetTotalStudentsCurrent(db))
+    totalGroups := (totalEntries / limitStudent) + 1
 
-	db := config.GetDBInstance()
-	limitStudent := 100
-	totalEntries := int(repository.GetTotalStudentsCurrent(db))
+    var wg sync.WaitGroup
 
-	totalGroups := (totalEntries / 100) + 1
-	
-	var startFilter = 0
-	var indexNumberList []string
-	var indexNumberListAcsee []string
-	log.Printf("Verifying %d", totalEntries)
-	for i := 0; i < totalGroups; i++ {
-		var students = repository.GetApplicantDataLimited(db, startFilter, limitStudent)
-		log.Printf("Student %d ", len(students))
+    // Create a channel to manage index numbers
+    indexNumberChannel := make(chan []string, totalGroups*2)
+    indexNumberAcseeChannel := make(chan []string, totalGroups*2)
 
-		if len(students) > 0 {
-			for _, student := range students {
-				indexNumberList = append(indexNumberList, student.F4index)
-				indexNumberListAcsee = append(indexNumberListAcsee, student.F6Index)
-			}
-			startFilter = startFilter + limitStudent
-		}
+    // Worker pool for saving to database
+    numWorkers := 5 // Adjust based on your concurrency needs
+    for i := 0; i < numWorkers; i++ {
+        wg.Add(2) // One for each type of data to be saved
+        go worker(indexNumberChannel, 1, &wg)
+        go worker(indexNumberAcseeChannel, 2, &wg)
+    }
 
-		go saveToDatabase(indexNumberList,1)
-		go saveToDatabase(indexNumberListAcsee,2)
-	}
-	
-	return ctx.Status(200).JSON("{message: 'success'}")
+    var startFilter = 0
+    for i := 0; i < totalGroups; i++ {
+        students := repository.GetApplicantDataLimited(db, startFilter, limitStudent)
+        log.Printf("Student %d ", len(students))
+
+        if len(students) > 0 {
+            indexNumberList := make([]string, 0, len(students))
+            indexNumberListAcsee := make([]string, 0, len(students))
+
+            for _, student := range students {
+                indexNumberList = append(indexNumberList, student.F4index)
+                indexNumberListAcsee = append(indexNumberListAcsee, student.F6Index)
+            }
+            startFilter = startFilter + limitStudent
+
+            // Send data to channels for processing
+            indexNumberChannel <- indexNumberList
+            indexNumberAcseeChannel <- indexNumberListAcsee
+        }
+    }
+
+    // Close channels and wait for all goroutines to finish
+    close(indexNumberChannel)
+    close(indexNumberAcseeChannel)
+    wg.Wait()
+
+    return ctx.Status(200).JSON(fiber.Map{"message": "success"})
 }
+
+// Worker function to process data from channels
+func worker(dataChannel <-chan []string, dataType int, wg *sync.WaitGroup) {
+    defer wg.Done()
+    for data := range dataChannel {
+        saveToDatabase(data, dataType)
+    }
+}
+
 
 func saveToDatabase(indexNumberList []string, examType int) {
 	results , err := repository.GetStudentResultsBulky(indexNumberList, examType)
