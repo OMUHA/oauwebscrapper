@@ -233,7 +233,7 @@ func GetStudentResultsBulky(indexNoList []string,examId int)([]model.NectaStuden
 		log.Fatal(resp.RawResponse)
 	}
 
-	log.Printf("Response %+v", responResult.Candidates)
+	log.Printf("Response %+v", responResult.Status)
 	return responResult.Candidates, nil
 
 }
@@ -251,14 +251,16 @@ func matchIndex(index string) bool {
 
 func CreateStudentNectaResults(db *gorm.DB, students []model.NectaStudentResult, indexNoList []string, examId int) error {
 	// search student results for each index number
+	log.Printf("Total students %d \n", len(students))
 	for _, student := range students {
 		// update student results
 		if student.Status.Code == 1 {
 			indexNo := student.Particulars.IndexNumber + "/" + student.Particulars.ExamYear
 			indexNo = strings.ReplaceAll(indexNo, "-", "/")
+			log.Printf("updating student %s \n", indexNo)
 			if (examId == 1){
 				cseeResultJson, _ := json.Marshal(student)
-				db.Model(&model.ApplicantDetail{}).
+				err := db.Model(&model.ApplicantDetail{}).
 				Where("f4index = ?", indexNo).
 				Updates(&model.ApplicantDetail{Fname:student.Particulars.FirstName,
 					Mname:student.Particulars.MiddleName,
@@ -267,10 +269,13 @@ func CreateStudentNectaResults(db *gorm.DB, students []model.NectaStudentResult,
 					CseeCenterName: student.Particulars.CenterName,
 					CseeDivision: student.Results.Division,
 					CseePoints: student.Results.Points,
-					F4index: indexNo, CseeResult: string(cseeResultJson)})
+					F4index: indexNo, CseeResult: string(cseeResultJson)}).Error 
+				if err != nil {
+					log.Printf("Error updating csee student %s:   %s\n", indexNo,err.Error())
+				}
 			}else{
 				acseeResultJson, _ := json.Marshal(student.Results)
-				db.Model(&model.ApplicantDetail{}).
+				err := db.Model(&model.ApplicantDetail{}).
 				Where("f6index = ?", indexNo).
 				Updates(&model.ApplicantDetail{Fname:student.Particulars.FirstName,
 					Mname:student.Particulars.MiddleName,
@@ -279,7 +284,10 @@ func CreateStudentNectaResults(db *gorm.DB, students []model.NectaStudentResult,
 					AcseeCenterName:student.Particulars.CenterName,
 					AcseeDivision:student.Results.Division,
 					AcseePoints:student.Results.Points,
-					AcseeResult: string(acseeResultJson)})
+					AcseeResult: string(acseeResultJson)}).Error
+					if err != nil {
+						log.Printf("Error updating acsee student %s:   %s\n", indexNo,err.Error())
+					}
 			}
 		}else{
 			log.Printf("Error updating student %s: %v \n", student.Particulars.IndexNumber, student)
