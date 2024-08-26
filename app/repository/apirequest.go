@@ -171,7 +171,7 @@ func UpdateStudentStatus(db *gorm.DB, students []model.TCUResponseParameters) {
 func GetStudentResultsBulky(indexNoList []string,examId int)([]model.NectaStudentResult,error ){
 	
 	var responResult struct {
-		Response []model.NectaStudentResult `json:"response"`
+		Candidates []model.NectaStudentResult `json:"candidates"`
 		Status   model.NectaApiResponseStatus `json:"status"`
 	}
 
@@ -204,21 +204,21 @@ func GetStudentResultsBulky(indexNoList []string,examId int)([]model.NectaStuden
 
 	client := resty.New();
 	// Add a request hook to log requests
-    client.OnBeforeRequest(func(c *resty.Client, r *resty.Request) error {
+    /* client.OnBeforeRequest(func(c *resty.Client, r *resty.Request) error {
         log.Printf("Request URL: %s", r.URL)
         log.Printf("Request Method: %s", r.Method)
         log.Printf("Request Headers: %v", r.Header)
         log.Printf("Request Body: %s", r.Body)
         return nil
-    })
+    }) */
 
     // Add a response hook to log responses
-    client.OnAfterResponse(func(c *resty.Client, r *resty.Response) error {
+     /* client.OnAfterResponse(func(c *resty.Client, r *resty.Response) error {
         log.Printf("Response Status Code: %d", r.StatusCode())
         log.Printf("Response Headers: %v", r.Header())
         log.Printf("Response Body: %s", r.String())
         return nil
-    })
+    }) */
 	resp , err := client.R().
 		SetHeader("Content-Type","application/json").
 		SetBody(request).
@@ -233,8 +233,8 @@ func GetStudentResultsBulky(indexNoList []string,examId int)([]model.NectaStuden
 		log.Fatal(resp.RawResponse)
 	}
 
-	log.Printf("Response %+v", responResult.Response)
-	return responResult.Response, nil
+	log.Printf("Response %+v", responResult.Candidates)
+	return responResult.Candidates, nil
 
 }
 
