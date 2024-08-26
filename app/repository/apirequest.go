@@ -2,14 +2,16 @@ package repository
 
 import (
 	"crypto/tls"
+	"encoding/json"
 	"encoding/xml"
+	"log"
+	"strconv"
+	"strings"
+
 	"github.com/OMUHA/oauwebscrapper/app/model"
 	"github.com/OMUHA/oauwebscrapper/config"
 	"github.com/go-resty/resty/v2"
 	"gorm.io/gorm"
-	"log"
-	"strconv"
-	"strings"
 )
 
 /*func parseXML(xmlData []byte) (model.TCUResponseParameters, error) {
@@ -163,6 +165,96 @@ func UpdateStudentStatus(db *gorm.DB, students []model.TCUResponseParameters) {
 				VerificationCode: strconv.Itoa(student.StatusCode)})
 	}
 
+}
+
+func GetStudentResultsBulky(indexNoList []string,examId int)([]model.NectaStudentResult,error ){
+	client := resty.New();
+	var responResult struct {
+		Response []model.NectaStudentResult `json:"response"`
+		Status   model.NectaApiResponseStatus `json:"status"`
+	}
+
+	var request    struct {
+		Particulars []struct {
+			IndexNumber string `json:"index_number"`
+			ExamYear string `json:"exam_year"`
+			ExamId int `json:"exam_id"`
+		} `json:"particulars"`
+		ApiKey string `json:"api_key"`
+	}
+
+	request.ApiKey = "$2y$10$7BFbtDEWB2uac61b96WhlO7tAJp0p4bHbVYxhZgCe.D.WOGgHrG/2"
+	
+	for _, v := range(indexNoList) {
+		indexNo, examYear := splitIndexToParts(v)
+		request.Particulars = append(request.Particulars, struct {
+			IndexNumber string `json:"index_number"`
+			ExamYear string `json:"exam_year"`
+			ExamId int `json:"exam_id"`
+		}{IndexNumber: indexNo, ExamYear: examYear, ExamId:  examId})
+	}
+
+	requestJson, _ := json.Marshal(request)
+
+	resp , err := client.R().
+		SetHeader("Content-Type","application/json").
+		SetBody(&requestJson).
+		SetResult(&responResult).
+		Post("https://api.necta.go.tz/api/results/bulk-general")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if resp.IsError() {
+		log.Fatal(resp.RawResponse)
+	}
+
+	return responResult.Response, nil
+
+}
+
+func CreateStudentNectaResults(db *gorm.DB, students []model.NectaStudentResult, indexNoList []string, examId int) error {
+	// search student results for each index number
+	for _, student := range students {
+		// update student results
+		if student.Status.Code == 1 {
+			indexNo := student.Particulars.IndexNumber + "/" + student.Particulars.ExamYear
+			indexNo = strings.ReplaceAll(indexNo, "-", "/")
+			if (examId == 1){
+				cseeResultJson, _ := json.Marshal(student)
+				db.Model(&model.ApplicantDetail{}).
+				Where("f4index = ?", indexNo).
+				Updates(&model.ApplicantDetail{Fname:student.Particulars.FirstName,
+					Mname:student.Particulars.MiddleName,
+					Lname:student.Particulars.LastName,
+					Gender: student.Particulars.Sex,
+					F4index: indexNo, CseeResult: string(cseeResultJson)})
+			}else{
+				acseeResultJson, _ := json.Marshal(student.Results)
+				db.Model(&model.ApplicantDetail{}).
+				Where("f6index = ?", indexNo).
+				Updates(&model.ApplicantDetail{Fname:student.Particulars.FirstName,
+					Mname:student.Particulars.MiddleName,
+					Lname:student.Particulars.LastName,
+					Gender:student.Particulars.Sex,
+					AcseeResult: string(acseeResultJson)})
+			}
+		}else{
+			log.Printf("Error updating student %s: %v \n", student.Particulars.IndexNumber, student)
+		}
+	}
+	return nil
+}
+
+// split index no exam is S0140/0010/2010 
+// split to year and index and replacy foward slash with dash (-)
+
+func splitIndexToParts(indexNo string) (string, string) {
+	var index = indexNo[:10]
+	var year = indexNo[11:15]
+	index = strings.ReplaceAll(index, "/", "-")
+	return index, year
 }
 
 func GetStudentsListing(schoolNumber string) []model.NectaStudentDetail {

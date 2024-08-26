@@ -2,13 +2,14 @@ package repository
 
 import (
 	"fmt"
+	"log"
+	"strconv"
+	"strings"
+
 	"github.com/OMUHA/oauwebscrapper/app/model"
 	"github.com/OMUHA/oauwebscrapper/app/models/necta"
 	"github.com/OMUHA/oauwebscrapper/config"
 	"gorm.io/gorm"
-	"log"
-	"strconv"
-	"strings"
 )
 
 func StoreStudentResults(studentResults []necta.StudentResult) error {
@@ -247,6 +248,12 @@ func GetApplicantData(db *gorm.DB) []model.ApplicantDetail {
 func GetTotalStuentDetaisl(db *gorm.DB) int64 {
 	var total int64
 	db.Model(&model.ApplicantDetail{}).Count(&total)
+	return total
+}
+
+func GetTotalStudentsCurrent(db *gorm.DB) int64 {
+	var total int64
+	db.Model(&model.ApplicantDetail{}).Where("created_at >=", "2024-08-10").Count(&total)
 	return total
 }
 

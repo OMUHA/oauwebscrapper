@@ -3,12 +3,6 @@ package controllers
 import (
 	"crypto/tls"
 	"fmt"
-	"github.com/OMUHA/oauwebscrapper/app/model"
-	"github.com/OMUHA/oauwebscrapper/app/models"
-	"github.com/OMUHA/oauwebscrapper/app/repository"
-	"github.com/OMUHA/oauwebscrapper/config"
-	"github.com/gocolly/colly"
-	"github.com/gofiber/fiber/v2"
 	"log"
 	"net"
 	"net/http"
@@ -17,6 +11,13 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/OMUHA/oauwebscrapper/app/model"
+	"github.com/OMUHA/oauwebscrapper/app/models"
+	"github.com/OMUHA/oauwebscrapper/app/repository"
+	"github.com/OMUHA/oauwebscrapper/config"
+	"github.com/gocolly/colly"
+	"github.com/gofiber/fiber/v2"
 )
 
 var endCount = 200000
@@ -55,6 +56,49 @@ func VerifyStudentList(ctx *fiber.Ctx) error {
 	response.Status = 200
 	return ctx.Status(200).JSON(response)
 }
+
+func DownloadACSEECSEEResults(ctx *fiber.Ctx) error {
+
+	db := config.GetDBInstance()
+	limitStudent := 1000
+	totalEntries := int(repository.GetTotalStudentsCurrent(db))
+
+	totalGroups := (totalEntries / 1000) + 1
+	
+	var startFilter = 0
+	var indexNumberList []string
+	var indexNumberListAcsee []string
+	log.Printf("Verifying %d", totalEntries)
+	for i := 0; i < totalGroups; i++ {
+		var students = repository.GetApplicantDataLimited(db, startFilter, limitStudent)
+		log.Printf("Student %d ", len(students))
+
+		if len(students) > 0 {
+			for _, student := range students {
+				indexNumberList = append(indexNumberList, student.F4index)
+				indexNumberListAcsee = append(indexNumberListAcsee, student.F6Index)
+			}
+			startFilter = startFilter + limitStudent
+		}
+
+		go saveToDatabase(indexNumberList,1)
+		go saveToDatabase(indexNumberListAcsee,2)
+	}
+	
+}
+
+func saveToDatabase(indexNumberList []string, examType int) {
+	results , err := repository.GetStudentResultsBulky(indexNumberList, examType)
+	if err != nil {
+		log.Printf("student  error %s", err.Error())
+	}
+    db := config.GetDBInstance()
+	err := repository.CreateStudentNectaResults(db, results, indexNumberList, examType)
+	if err != nil {
+		log.Printf("student  error %s", err.Error())
+	}
+}
+
 
 func DownloadAppData(ctx *fiber.Ctx) error {
 	c := colly.NewCollector(

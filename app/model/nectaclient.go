@@ -28,6 +28,34 @@ type NectaSchool struct {
 	PostalAddress      string `json:"postal_address"  gorm:"size:200"`
 	IsGovernment       int    `json:"is_government"`
 }
+ 
+
+type NectaStudentResult struct {
+	Particulars struct {
+		IndexNumber string `json:"index_number"`
+		FirstName string `json:"first_name"`
+		MiddleName string `json:"middle_name"`
+		LastName string `json:"last_name"`
+		Sex string `json:"sex"`
+		CenterNumber string `json:"center_number"`
+		CenterName string `json:"center_name"`
+		ExamId string `json:"exam_id"`
+		ExamYear string `json:"exam_year"`
+	} `json:"particulars"`
+	Results struct {
+		Division string `json:"division"`
+		Points string `json:"points"`
+		Subjects []struct {
+			SubjectName string `json:"subject_name"`
+			SubjectCode string `json:"subject_code"`
+			Grade string `json:"grade"`
+		}
+	} `json:"results"`
+	Status struct {
+		Code int `json:"code"`
+		Message string `json:"message"`
+	} `json:"status"`
+}
 
 type NectaStudentDetail struct {
 	gorm.Model
@@ -89,6 +117,8 @@ type ApplicantDetail struct {
 	Gender             string `json:"gender"`
 	F4result           string `json:"f4result"`
 	F6Result           string `json:"F6Result"`
+	CseeResult string `json:"csee_result"`
+	AcseeResult string `json:"acsee_result"`
 	MobileNumber       string `json:"mobile_number"`
 	EmailAddress       string `json:"email_address"`
 	AdmissionStatus    string `json:"admission_status"`
