@@ -169,7 +169,7 @@ func UpdateStudentStatus(db *gorm.DB, students []model.TCUResponseParameters) {
 }
 
 func GetStudentResultsBulky(indexNoList []string,examId int)([]model.NectaStudentResult,error ){
-	client := resty.New();
+	
 	var responResult struct {
 		Response []model.NectaStudentResult `json:"response"`
 		Status   model.NectaApiResponseStatus `json:"status"`
@@ -200,14 +200,16 @@ func GetStudentResultsBulky(indexNoList []string,examId int)([]model.NectaStuden
 		}
 	}
 
-	requestJson, _ := json.Marshal(request)
+	//requestJson, _ := json.Marshal(request)
 
+	client := resty.New();
 	resp , err := client.R().
 		SetHeader("Content-Type","application/json").
-		SetBody(string(requestJson)).
+		SetBody(request).
 		SetResult(responResult).
 		Post("https://api.necta.go.tz/api/results/bulk-general")
-
+	log.Fatalf("Request %s obb %+v",request)
+	panic(err)
 	if err != nil {
 		log.Fatal(err)
 	}
