@@ -118,7 +118,13 @@ type ApplicantDetail struct {
 	F4result           string `json:"f4result"`
 	F6Result           string `json:"F6Result"`
 	CseeResult string `json:"csee_result"`
+	CseeCenterName string `json:"csee_center_name"`
+	CseeDivision string `json:"csee_division"`
+	CseePoints string `json:"csee_points"`
 	AcseeResult string `json:"acsee_result"`
+	AcseeCenterName string `json:"acsee_center_name"`
+	AcseeDivision string `json:"acsee_division"`
+	AcseePoints string `json:"acsee_points"`
 	MobileNumber       string `json:"mobile_number"`
 	EmailAddress       string `json:"email_address"`
 	AdmissionStatus    string `json:"admission_status"`

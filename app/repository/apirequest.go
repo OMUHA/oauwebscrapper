@@ -264,6 +264,9 @@ func CreateStudentNectaResults(db *gorm.DB, students []model.NectaStudentResult,
 					Mname:student.Particulars.MiddleName,
 					Lname:student.Particulars.LastName,
 					Gender: student.Particulars.Sex,
+					CseeCenterName: student.Particulars.CenterName,
+					CseeDivision: student.Results.Division,
+					CseePoints: student.Results.Points,
 					F4index: indexNo, CseeResult: string(cseeResultJson)})
 			}else{
 				acseeResultJson, _ := json.Marshal(student.Results)
@@ -273,6 +276,9 @@ func CreateStudentNectaResults(db *gorm.DB, students []model.NectaStudentResult,
 					Mname:student.Particulars.MiddleName,
 					Lname:student.Particulars.LastName,
 					Gender:student.Particulars.Sex,
+					AcseeCenterName:student.Particulars.CenterName,
+					AcseeDivision:student.Results.Division,
+					AcseePoints:student.Results.Points,
 					AcseeResult: string(acseeResultJson)})
 			}
 		}else{
