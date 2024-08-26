@@ -39,7 +39,7 @@ type NectaStudentResult struct {
 		Sex string `json:"sex"`
 		CenterNumber string `json:"center_number"`
 		CenterName string `json:"center_name"`
-		ExamId string `json:"exam_id"`
+		ExamId int `json:"exam_id"`
 		ExamYear string `json:"exam_year"`
 	} `json:"particulars"`
 	Results struct {
