@@ -222,7 +222,7 @@ func GetStudentResultsBulky(indexNoList []string,examId int)([]model.NectaStuden
 	resp , err := client.R().
 		SetHeader("Content-Type","application/json").
 		SetBody(request).
-		SetResult(responResult).
+		SetResult(&responResult).
 		Post("https://api.necta.go.tz/api/results/bulk-general")
 
 	if err != nil {
