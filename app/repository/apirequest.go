@@ -252,7 +252,7 @@ func matchIndex(index string) bool {
 func mapIndexFromList(index string, indexList []string) string {
 	index = strings.ReplaceAll(index, "-", "/")
 	for _, v := range indexList {
-		if strings.Contains(index, v) {
+		if strings.Contains( v,index) {
 			return v
 		}
 	}
