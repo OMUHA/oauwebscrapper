@@ -215,7 +215,9 @@ func GetStudentResultsBulky(indexNoList []string,examId int)([]model.NectaStuden
 	if resp.IsError() {
 		log.Fatal(resp.RawResponse)
 	}
+	log.Printf("Response %v", resp.RawResponse)
 
+	log.Printf("Response %v", responResult.Response)
 	return responResult.Response, nil
 
 }
