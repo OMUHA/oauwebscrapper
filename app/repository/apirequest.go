@@ -203,6 +203,22 @@ func GetStudentResultsBulky(indexNoList []string,examId int)([]model.NectaStuden
 	//requestJson, _ := json.Marshal(request)
 
 	client := resty.New();
+	// Add a request hook to log requests
+    client.OnBeforeRequest(func(c *resty.Client, r *resty.Request) error {
+        log.Printf("Request URL: %s", r.URL)
+        log.Printf("Request Method: %s", r.Method)
+        log.Printf("Request Headers: %v", r.Header)
+        log.Printf("Request Body: %s", r.Body)
+        return nil
+    })
+
+    // Add a response hook to log responses
+    client.OnAfterResponse(func(c *resty.Client, r *resty.Response) error {
+        log.Printf("Response Status Code: %d", r.StatusCode())
+        log.Printf("Response Headers: %v", r.Header())
+        log.Printf("Response Body: %s", r.String())
+        return nil
+    })
 	resp , err := client.R().
 		SetHeader("Content-Type","application/json").
 		SetBody(request).
