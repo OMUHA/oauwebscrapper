@@ -21,9 +21,9 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-var endCount = 200000
+var endCount = 425600
 var studentsLimit = 10000
-var startCount = 0
+var startCount = 200000
 
 func VerifyStudentList(ctx *fiber.Ctx) error {
 
@@ -58,75 +58,73 @@ func VerifyStudentList(ctx *fiber.Ctx) error {
 	return ctx.Status(200).JSON(response)
 }
 func DownloadACSEECSEEResults(ctx *fiber.Ctx) error {
-    db := config.GetDBInstance()
-    limitStudent := 100
-    totalEntries := int(repository.GetTotalStudentsCurrent(db))
-    totalGroups := (totalEntries / limitStudent) + 1
+	db := config.GetDBInstance()
+	limitStudent := 100
+	totalEntries := int(repository.GetTotalStudentsCurrent(db))
+	totalGroups := (totalEntries / limitStudent) + 1
 
-    var wg sync.WaitGroup
+	var wg sync.WaitGroup
 
-    // Create a channel to manage index numbers
-    indexNumberChannel := make(chan []string, totalGroups*2)
-    indexNumberAcseeChannel := make(chan []string, totalGroups*2)
+	// Create a channel to manage index numbers
+	indexNumberChannel := make(chan []string, totalGroups*2)
+	indexNumberAcseeChannel := make(chan []string, totalGroups*2)
 
-    // Worker pool for saving to database
-    numWorkers := 5 // Adjust based on your concurrency needs
-    for i := 0; i < numWorkers; i++ {
-        wg.Add(2) // One for each type of data to be saved
-        go worker(indexNumberChannel, 1, &wg)
-        go worker(indexNumberAcseeChannel, 2, &wg)
-    }
+	// Worker pool for saving to database
+	numWorkers := 5 // Adjust based on your concurrency needs
+	for i := 0; i < numWorkers; i++ {
+		wg.Add(2) // One for each type of data to be saved
+		go worker(indexNumberChannel, 1, &wg)
+		go worker(indexNumberAcseeChannel, 2, &wg)
+	}
 
-    var startFilter = 0
-    for i := 0; i < totalGroups; i++ {
-        students := repository.GetApplicantDataLimited(db, startFilter, limitStudent)
-        log.Printf("Student %d ", len(students))
+	var startFilter = 0
+	for i := 0; i < totalGroups; i++ {
+		students := repository.GetApplicantDataLimited(db, startFilter, limitStudent)
+		log.Printf("Student %d ", len(students))
 
-        if len(students) > 0 {
-            indexNumberList := make([]string, 0, len(students))
-            indexNumberListAcsee := make([]string, 0, len(students))
+		if len(students) > 0 {
+			indexNumberList := make([]string, 0, len(students))
+			indexNumberListAcsee := make([]string, 0, len(students))
 
-            for _, student := range students {
-                indexNumberList = append(indexNumberList, student.F4index)
-                indexNumberListAcsee = append(indexNumberListAcsee, student.F6Index)
-            }
-            startFilter = startFilter + limitStudent
+			for _, student := range students {
+				indexNumberList = append(indexNumberList, student.F4index)
+				indexNumberListAcsee = append(indexNumberListAcsee, student.F6Index)
+			}
+			startFilter = startFilter + limitStudent
 
-            // Send data to channels for processing
-            indexNumberChannel <- indexNumberList
-            indexNumberAcseeChannel <- indexNumberListAcsee
-        }
-    }
+			// Send data to channels for processing
+			indexNumberChannel <- indexNumberList
+			indexNumberAcseeChannel <- indexNumberListAcsee
+		}
+	}
 
-    // Close channels and wait for all goroutines to finish
-    close(indexNumberChannel)
-    close(indexNumberAcseeChannel)
-    wg.Wait()
+	// Close channels and wait for all goroutines to finish
+	close(indexNumberChannel)
+	close(indexNumberAcseeChannel)
+	wg.Wait()
 
-    return ctx.Status(200).JSON(fiber.Map{"message": "success"})
+	return ctx.Status(200).JSON(fiber.Map{"message": "success"})
 }
 
-// Worker function to process data from channels
+// Worker function to process data from channelsl
 func worker(dataChannel <-chan []string, dataType int, wg *sync.WaitGroup) {
-    defer wg.Done()
-    for data := range dataChannel {
-        saveToDatabase(data, dataType)
-    }
+	defer wg.Done()
+	for data := range dataChannel {
+		saveToDatabase(data, dataType)
+	}
 }
-
 
 func saveToDatabase(indexNumberList []string, examType int) {
-	results , err := repository.GetStudentResultsBulky(indexNumberList, examType)
+	results, err := repository.GetStudentResultsBulky(indexNumberList, examType)
 	if err != nil {
 		log.Printf("student  error %s", err.Error())
 	}
-    db := config.GetDBInstance()
-	err  = repository.CreateStudentNectaResults(db, results, indexNumberList, examType)
+	db := config.GetDBInstance()
+	err = repository.CreateStudentNectaResults(db, results, indexNumberList, examType)
 	if err != nil {
 		log.Printf("student  error %s", err.Error())
 	}
 }
-
 
 func DownloadAppData(ctx *fiber.Ctx) error {
 	c := colly.NewCollector(
@@ -158,7 +156,7 @@ func DownloadAppData(ctx *fiber.Ctx) error {
 
 	cookie := &http.Cookie{
 		Name:   "PHPSESSID",
-		Value:  "hov82i842cim7opr6e4lagpka0",
+		Value:  "pjitcfivi1e1e6lh1orj9plj80",
 		Domain: "uims.tcu.go.tz",
 	}
 

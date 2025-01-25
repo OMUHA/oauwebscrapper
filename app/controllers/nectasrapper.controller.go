@@ -209,7 +209,13 @@ func NectaCseeScrapper(ctx *fiber.Ctx) error {
 						fmt.Println("Center Number already exists ", centerNo)
 						return
 					} else {
-						if yearID == "2023" {
+						if yearID == "2024" {
+							err := schoolResultCollector.Visit("https://matokeo.necta.go.tz/results/2024/csee/CSEE2024/CSEE2024/results/" + centerNoOg + ".htm")
+							if err != nil {
+								fmt.Println(err)
+								return
+							}
+						} else if yearID == "2023" {
 							err := schoolResultCollector.Visit("https://matokeo.necta.go.tz/results/2023/csee/CSEE2023/results/" + centerNoOg + ".htm")
 							if err != nil {
 								fmt.Println(err)
@@ -251,7 +257,12 @@ func NectaCseeScrapper(ctx *fiber.Ctx) error {
 		fmt.Println("Finished", r.Request.URL)
 	})
 
-	if yearID == "2023" {
+	if yearID == "2024" {
+		err := c.Visit("https://matokeo.necta.go.tz/results/2024/csee/CSEE2024/CSEE2024.htm")
+		if err != nil {
+			return err
+		}
+	} else if yearID == "2023" {
 		err := c.Visit("https://matokeo.necta.go.tz/results/2023/csee/CSEE%202023.htm")
 		if err != nil {
 			return err

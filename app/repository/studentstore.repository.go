@@ -259,7 +259,7 @@ func GetTotalStudentsCurrent(db *gorm.DB) int64 {
 
 func GetApplicantDataLimited(db *gorm.DB, start, limit int) []model.ApplicantDetail {
 	var students []model.ApplicantDetail
-	err := db.Model(&model.ApplicantDetail{}).Where("created_at >= ? and csee_points is null", "2024-08-10").Offset(start).Limit(limit).Find(&students).Error
+	err := db.Model(&model.ApplicantDetail{}).Offset(start).Limit(limit).Find(&students).Error
 
 	if err != nil {
 		log.Printf(" errors %s", err.Error())
