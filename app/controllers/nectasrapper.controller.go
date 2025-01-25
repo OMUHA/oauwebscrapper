@@ -12,6 +12,7 @@ import (
 	"math/rand"
 	"net"
 	"net/http"
+	"path"
 	"strings"
 	"time"
 )
@@ -144,6 +145,45 @@ func NectaCseeScrapper(ctx *fiber.Ctx) error {
 						case "CHEM":
 							student.Chem = grade
 							student.ChemPts = repository.CalculateGradePoint(grade)
+						case "CIV":
+							student.Civ = grade
+							student.CivPts = repository.CalculateGradePoint(grade)
+							break
+						case "GEO":
+							student.Geo = grade
+							student.GeoPts = repository.CalculateGradePoint(grade)
+							break
+						case "HIST":
+							student.Hist = grade
+							student.HistPts = repository.CalculateGradePoint(grade)
+							break
+						case "KISW":
+							student.Kisw = grade
+							student.KiswPts = repository.CalculateGradePoint(grade)
+							break
+						case "ARABIC":
+							student.Arabic = grade
+							student.ArabicPts = repository.CalculateGradePoint(grade)
+							break
+						case "FRENCH":
+							student.French = grade
+							student.FrenchPts = repository.CalculateGradePoint(grade)
+							break
+						case "C/SKILL":
+							student.Cskill = grade
+							student.CskillPts = repository.CalculateGradePoint(grade)
+							break
+						case "C/TECH":
+							student.Ctech = grade
+							student.CtechPts = repository.CalculateGradePoint(grade)
+							break
+						case "B/K":
+							student.Bk = grade
+							student.BkPts = repository.CalculateGradePoint(grade)
+							break
+						case "LIT ENG":
+							student.Lit = grade
+							student.LitPts = repository.CalculateGradePoint(grade)
 						}
 					}
 					if strings.Contains(strings.ToUpper(student.CandidateNo), "S") {
@@ -194,15 +234,16 @@ func NectaCseeScrapper(ctx *fiber.Ctx) error {
 				el.ForEach("a", func(_ int, el *colly.HTMLElement) {
 					fmt.Println(el.Attr("href"))
 					link := el.Attr("href")
-					centerNo := ""
-					if yearID == "2023" {
-						centerNo = link[17:22]
-					} else {
-						centerNo = link[8:13]
-					}
+					basepath := path.Base(link)
+					splitPath := strings.Split(basepath, ".")
+					stringLength := len(splitPath[0])
+					centerNo := splitPath[0][stringLength-5 : stringLength]
 
 					log.Println(centerNo)
 					log.Println(link)
+
+					fmt.Printf("Found link: %s, Text: %s\n", link, el.Text)
+
 					centerNoOg := centerNo
 					centerNo = strings.ToUpper(centerNo)
 					if repository.CheckSchoolExists(centerNo) && repository.CheckNectaSchoolHasStudents(centerNo, yearID, "csee") {
@@ -431,6 +472,7 @@ func NectaACseeScrapper(ctx *fiber.Ctx) error {
 						fmt.Println("Center Number already exists ", centerNo)
 						return
 					} else {
+
 						if yearID == "2023" {
 							err := schoolResultCollector.Visit("https://matokeo.necta.go.tz/results/2023/acsee/results/" + centerNoOg + ".htm")
 							if err != nil {

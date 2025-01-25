@@ -56,7 +56,27 @@ type StudentResult struct {
 	Bio              string `json:"bio" gorm:"type:varchar(2)"`
 	BioPts           int    `json:"bio_pts"`
 	Bmath            string `json:"bmat" gorm:"type:varchar(2)"`
+	BmathPts         int    `json:"bmath_pts"`
 	Eng              string `json:"eng" gorm:"type:varchar(2)"`
 	EngPts           int    `json:"eng_pts"`
-	BmathPts         int    `json:"bmath"`
+	Civ              string `json:"civ" gorm:"type:varchar(2)"`
+	CivPts           int    `json:"civ_pts"`
+	Geo              string `json:"geo" gorm:"type:varchar(2)"`
+	GeoPts           int    `json:"geo_pts"`
+	Hist             string `json:"hist" gorm:"type:varchar(2)"`
+	HistPts          int    `json:"hist_pts"`
+	Kisw             string `json:"kisw" gorm:"type:varchar(2)"`
+	KiswPts          int    `json:"kisw_pts"`
+	Arabic           string `json:"arabic" gorm:"type:varchar(2)"`
+	ArabicPts        int    `json:"arabic_pts"`
+	French           string `json:"french" gorm:"type:varchar(2)"`
+	FrenchPts        int    `json:"french_pts"`
+	Cskill           string `json:"cskill" gorm:"type:varchar(2)"`
+	CskillPts        int    `json:"cskill_pts"`
+	Ctech            string `json:"ctech" gorm:"type:varchar(2)"`
+	CtechPts         int    `json:"ctech_pts"`
+	Bk               string `json:"bk" gorm:"type:varchar(2)"`
+	BkPts            int    `json:"bk_pts"`
+	Lit              string `json:"lit" gorm:"type:varchar(2)"`
+	LitPts           int    `json:"lit_pts"`
 }

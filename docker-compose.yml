@@ -41,22 +41,22 @@ services:
         networks:
             - webscrapper
  # WEb application api service
-    webscrapper:
-        build:
-            context: .
-            dockerfile: ./Dockerfile
-            target: dev
-        working_dir: /opt/app/api
-        container_name: webscrapper
-        restart: always
-        ports:
-            - ${SERVER_LISTEN_PORT}:${APP_PORT}
-        depends_on:
-            - webscrapper_db2
-        networks:
-            - webscrapper
-        volumes:
-            - ./:/app
+ #   webscrapper:
+ #       build:
+ #           context: .
+ #           dockerfile: ./Dockerfile
+ #           target: dev
+ #       working_dir: /opt/app/api
+ #       container_name: webscrapper
+ #       restart: always
+ #       ports:
+ #           - ${SERVER_LISTEN_PORT}:${APP_PORT}
+ #       depends_on:
+ #           - webscrapper_db2
+ #       networks:
+ #           - webscrapper
+ #       volumes:
+ #           - ./:/app
 #Docker Networks
 networks:
   webscrapper:
